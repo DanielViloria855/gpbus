@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Pasajero</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #map {
+            height: 400px;  /* Altura del mapa */
+            width: 100%;    /* Ancho del mapa */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido, {{ usuario.nombre }} (Pasajero)</h1>
+        <div id="map"></div>
+        <button id="getLocation" class="btn btn-primary mt-3">Obtener mi ubicación</button>
+    </div>
+
+    <script>
+        let map;
+        let marker;
+
+        function initMap() {
+            // Inicializar el mapa en una ubicación predeterminada
+            const defaultLocation = { lat: -34.397, lng: 150.644 }; // Cambia esto a una ubicación predeterminada
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: defaultLocation,
+            });
+
+            // Crear un marcador
+            marker = new google.maps.Marker({
+                position: defaultLocation,
+                map: map,
+            });
+        }
+
+        document.getElementById("getLocation").addEventListener("click", function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+
+                    // Mover el mapa al lugar actual
+                    map.setCenter(pos);
+                    marker.setPosition(pos);
+                }, function() {
+                    handleLocationError(true);
+                });
+            } else {
+                // El navegador no soporta geolocalización
+                handleLocationError(false);
+            }
+        });
+
+        function handleLocationError(browserHasGeolocation) {
+            alert(browserHasGeolocation ?
+                "Error: El servicio de geolocalización ha fallado." :
+                "Error: Tu navegador no soporta geolocalización.");
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfgk2j3CntYbYUTVQ-9Jh2BSN4TEbUVGI">
+    </script>
+</body>
+</html>
