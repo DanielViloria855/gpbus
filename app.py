@@ -18,8 +18,9 @@ inicializar(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"  # Redirigir a la vista de inicio de sesión
+login_manager.login_view = "login"
 app.secret_key = 'daniel115valdes'
+
 @login_manager.user_loader
 def load_user(user_id):
     return UsuarioModel.query.get(int(user_id))
@@ -30,22 +31,22 @@ def login():
         data = request.form  
         usuario = UsuarioModel.query.filter_by(email=data.get('email')).first()
 
-        if usuario and usuario.check_password(data.get('password')):  # Usar el método check_password
-            login_user(usuario)  # Iniciar sesión
+        if usuario and usuario.check_password(data.get('password')):
+            login_user(usuario)
             
-            # Redirigir según el tipo de usuario
             if usuario.tipo_usuario == "pasajero":
-                return redirect(url_for('pagina_pasajero'))  # Redirigir a la página de pasajero
+                return redirect(url_for('pagina_pasajero'))
             elif usuario.tipo_usuario == "conductor":
-                return redirect(url_for('pagina_conductor'))  # Redirigir a la página de conductor
+                return redirect(url_for('pagina_conductor'))
             elif usuario.tipo_usuario == "admin":
-                return redirect(url_for('pagina_admin'))  # Redirigir a la página de administrador
+                return redirect(url_for('pagina_admin'))
             else:
-                return redirect(url_for('index'))  # Redirigir a la página de inicio por defecto
+                return redirect(url_for('index'))
         else: 
             flash("Credenciales incorrectas", "danger")
     
     return render_template('login.html')
+
 @app.route('/registro', methods=['GET', 'POST'])
 def registrar_usuario():
     if request.method == 'POST':
@@ -77,12 +78,12 @@ def registrar_usuario():
             return render_template("registro.html", mensaje="El email ya está registrado")
 
         nuevo_usuario = UsuarioModel(
-        nombre=nombre,
-        email=email,
-        tipo_usuario=tipo_usuario,
-        password=password,  # Esto llamará a set_password
-        licencia=licencia if tipo_usuario == "conductor" else None
-    )
+            nombre=nombre,
+            email=email,
+            tipo_usuario=tipo_usuario,
+            password=password,
+            licencia=licencia if tipo_usuario == "conductor" else None
+        )
 
         try:
             db.session.add(nuevo_usuario)
@@ -98,7 +99,6 @@ def registrar_usuario():
 @login_required
 def pagina_admin():
     if request.method == 'POST':
-        # Agregar nueva ruta
         nombre = request.form.get("nombre")
         precio = request.form.get("precio")
         descripcion = request.form.get("descripcion")
@@ -113,28 +113,61 @@ def pagina_admin():
         flash("Ruta agregada con éxito", "success")
         return redirect(url_for('pagina_admin'))
 
-    # Obtener todas las rutas existentes
     rutas = RutaModel.query.all()
     return render_template('admin.html', rutas=rutas)
+
+@app.route('/admin/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_ruta(id):
+    ruta = RutaModel.query.get_or_404(id)  # Asegúrate de que el ID se maneje correctamente
+
+    if request.method == 'POST':
+        ruta.nombre = request.form.get("nombre")
+        ruta.precio = float(request.form.get("precio"))
+        ruta.descripcion = request.form.get("descripcion")
+
+        db.session.commit()
+        flash("Ruta actualizada con éxito", "success")
+        return redirect(url_for('pagina_admin'))
+
+    return render_template('editar_ruta.html', ruta=ruta)
+
+@app.route('/admin/eliminar/<int:id>', methods=['POST'])
+@login_required
+def eliminar_ruta(id):
+    ruta = RutaModel.query.get_or_404(id)
+    db.session.delete(ruta)
+    db.session.commit()
+    flash("Ruta eliminada con éxito", "success")
+    return redirect(url_for('pagina_admin'))
 
 @app.route('/')
 @login_required
 def index():
     return render_template('bienvenida.html')
-@app.route('/pasajero')
 
+@app.route('/pasajero')
 def pagina_pasajero():
     return render_template('pasajero.html', usuario=current_user)
 
 @app.route('/conductor')
-
 def pagina_conductor():
     return render_template('conductor.html', usuario=current_user)
 
+@app.route('/rutas/<nombre>', methods=['GET'])
+def obtener_ruta(nombre):
+    ruta = RutaModel.query.filter_by(nombre=nombre).first()
+    
+    if ruta:
+        return jsonify({
+            "nombre": ruta.nombre,
+            "descripcion": ruta.descripcion,
+            "precio": ruta.precio
+        })
+    else:
+        return jsonify({"error": "Ruta no encontrada"}), 404
 
 if __name__ == '__main__':
     with app.app_context():  
         db.create_all()
     app.run(host="0.0.0.0", port=5000, debug=True)
-
-

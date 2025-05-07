@@ -1,83 +1,40 @@
-/* Paleta de colores verdes */
-:root {
-    --verde-oscuro: #0B3D02;
-    --verde-medio: #168F30;
-    --verde-claro: #A3E4A4;
-    --verde-suave: #D4F5D5;
-    --blanco: #FFFFFF;
-    --gris-claro: #F0F0F0;
-    --gris-oscuro: #555;
-}
-
 body {
-    font-family: Arial, sans-serif;
-    background-color: var(--verde-suave);
-    color: var(--verde-oscuro);
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: var(--verde-oscuro);
-    color: var(--blanco);
-    padding: 15px;
-    text-align: center;
-    font-size: 1.5rem;
-}
-
-nav {
-    background-color: var(--verde-medio);
-    padding: 10px;
-    text-align: center;
-}
-
-nav a {
-    color: var(--blanco);
-    text-decoration: none;
-    padding: 10px 15px;
-    font-weight: bold;
-}
-
-nav a:hover {
-    background-color: var(--verde-oscuro);
-    border-radius: 5px;
+    background-color: #e8f5e9;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: var(--blanco);
+    background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-button {
-    background-color: var(--verde-medio);
-    color: var(--blanco);
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: var(--verde-oscuro);
-}
-
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid var(--gris-claro);
-    border-radius: 5px;
-}
-
-footer {
-    background-color: var(--verde-oscuro);
-    color: var(--blanco);
-    text-align: center;
-    padding: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     margin-top: 20px;
+}
+
+h1 {
+    color: #2e7d32;
+}
+
+.btn-primary {
+    background-color: #388e3c;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #2e7d32;
+}
+
+.btn-success {
+    background-color: #4caf50;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #388e3c;
+}
+
+#map {
+    height: 400px;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
 }

@@ -5,41 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1b5e20, #4caf50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in-out;
+            text-align: center; /* Centra todo el contenido */
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px; /* Espaciado inferior */
+        }
+        h3 {
+            color: #1b5e20;
+            font-weight: bold;
+        }
+        .form-control {
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .form-control:focus {
+            border-color: #1b5e20;
+            box-shadow: 0 0 5px #1b5e20;
+        }
+        .btn-primary {
+            background: #1b5e20;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-primary:hover {
+            background: #0d3c13;
+        }
+        a {
+            color: #1b5e20;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        a:hover {
+            color: #0d3c13;
+            text-decoration: underline;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-
-<div class="container mt-5">
+<body>
+<div class="container">
     <div class="row justify-content-center">
         <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="text-center">Iniciar Sesión</h3>
-                    
-                    {% if mensaje %}
-                        <div class="alert alert-danger text-center">{{ mensaje }}</div>
-                    {% endif %}
+            <div class="login-container">
+                <div class="logo-container">
+                    <img src="{{ url_for('static', filename='img/gp.png') }}" alt="Logo" width="120" height="90">
+                </div>
+                <h3>Iniciar Sesión</h3>
 
-                    <form action="/login" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label">Correo:</label>
-                            <input type="email" class="form-control" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña:</label>
-                            <input type="password" class="form-control" name="password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
-                    </form>
+                {% if mensaje %}
+                    <div class="alert alert-danger text-center">{{ mensaje }}</div>
+                {% endif %}
 
-                    <div class="text-center mt-3">
-                        <p>¿No tienes cuenta? <a href="/registro">Regístrate aquí</a></p>
+                <form action="/login" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Correo:</label>
+                        <input type="email" class="form-control" name="email" required>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña:</label>
+                        <input type="password" class="form-control" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <p>¿No tienes cuenta? <a href="/registro">Regístrate aquí</a></p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

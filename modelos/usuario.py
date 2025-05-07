@@ -2,7 +2,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.confdb import db
 
-class Usuario(db.Model, UserMixin):  # Hereda de UserMixin
+class Usuario(db.Model, UserMixin):  
     __tablename__ = 'usuario'
     id_usuario = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
@@ -26,4 +26,4 @@ class Usuario(db.Model, UserMixin):  # Hereda de UserMixin
         return check_password_hash(self.password_hash, password)
 
     def get_id(self):
-        return self.id_usuario  # Devuelve el ID del usuario
+        return self.id_usuario  
