@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Administrar Conductores{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+  <h1 class="text-center text-success mb-4">Gestión de Conductores</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- Formulario de nuevo conductor -->
+  <form method="POST" class="mb-5">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Nombre</label>
+        <input name="nombre" type="text" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input name="email" type="email" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Licencia</label>
+        <input name="licencia" type="text" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Contraseña</label>
+        <input name="password" type="password" class="form-control" required>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success mt-3 w-100">
+      <i class="bi bi-plus-circle"></i> Agregar Conductor
+    </button>
+  </form>
+
+  <!-- Tabla de conductores -->
+  <h2 class="text-center text-success">Conductores Registrados</h2>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle mt-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Licencia</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in conductores %}
+        <tr>
+          <td>{{ c.id_usuario }}</td>
+          <td>{{ c.nombre }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.licencia or '-' }}</td>
+          <td class="acciones">
+            <a href="{{ url_for('editar_conductor', id=c.id_usuario) }}"
+               class="btn btn-warning btn-sm">
+              <i class="bi bi-pencil-fill"></i> Editar
+            </a>
+            <form method="POST" action="{{ url_for('eliminar_conductor', id=c.id_usuario) }}"
+                  style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm"
+                      onclick="return confirm('¿Eliminar este conductor?');">
+                <i class="bi bi-trash-fill"></i> Eliminar
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
