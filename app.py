@@ -287,6 +287,9 @@ def get_destinos():
         "San Pedro, Antioquia": {"lat": 6.459531328629943, "lng": -75.55972875682015}
     }
     return jsonify(destinos)
+@app.route('/graficos')
+def graficos():
+    return render_template('graficosadmin.html')
 if __name__ == '__main__':
     with app.app_context():  
         db.create_all()
