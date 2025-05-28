@@ -68,10 +68,30 @@
             <label for="descripcion" class="form-label">Descripción:</label>
             <textarea class="form-control" name="descripcion" rows="3">{{ ruta.descripcion }}</textarea>
         </div>
+        <div class="mb-3">
+            <label for="origen" class="form-label">Origen:</label>
+            <textarea class="form-control" name="origen" rows="3">{{ ruta.origen }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="destino" class="form-label">Destino:</label>
+            <textarea class="form-control" name="descripcion" rows="3">{{ ruta.destino }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="latitud_origen" class="form-label">Latitud Origen:</label>
+            <textarea class="form-control" name="latitud_origen" rows="3">{{ ruta.latitud_origen }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="longitud_origen" class="form-label">Longitud Origen:</label>
+            <textarea class="form-control" name="longitud_origen" rows="3">{{ ruta.longitud_origen }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="latitud_destino" class="form-label">Latitud Destino:</label>
+            <textarea class="form-control" name="latitud_destino" rows="3">{{ ruta.latitud_destino }}</textarea>
+        </div>
         <button type="submit" class="btn btn-primary">
             <i class="bi bi-save-fill"></i> Guardar Cambios
         </button>
-        <a href="{{ url_for('admin') }}" class="btn btn-secondary">
+        <a href="{{ url_for('pagina_admin') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left-circle"></i> Volver
         </a>
     </form>

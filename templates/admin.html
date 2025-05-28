@@ -103,6 +103,32 @@
             <label for="descripcion" class="form-label">Descripción:</label>
             <textarea class="form-control" name="descripcion"></textarea>
         </div>
+        <div class="mb-4">
+            <label for="origen" class="form-label">Origen:</label>
+            <textarea class="form-control" name="origen"></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="destino" class="form-label">Destino:</label>
+            <textarea class="form-control" name="destino"></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="latitud_origen" class="form-label">Latitud de origen:</label>
+            <input type="number" step="any" class="form-control" name="latitud_origen" required>
+        </div>
+        <div class="mb-4">
+            <label for="longitud_origen" class="form-label">Longitud de origen:</label>
+            <input type="number" step="any" class="form-control" name="longitud_origen" required>
+        </div>
+        <div class="mb-4">
+            <label for="latitud_destino" class="form-label">Latitud de destino:</label>
+            <input type="number" step="any" class="form-control" name="latitud_destino" required>
+        </div>
+        <div class="mb-4">
+            <label for="longitud_destino" class="form-label">Longitud de destino:</label>
+            <input type="number" step="any" class="form-control" name="longitud_destino" required>
+        </div>
+        </div>
+        
         <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i> Agregar Ruta</button>
     </form>
 
@@ -115,6 +141,12 @@
                     <th>Nombre</th>
                     <th>Precio</th>
                     <th>Descripción</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
+                    <th>Latitud Origen</th>
+                    <th>Longitud Origen</th>
+                    <th>Latitud Destino</th>
+                    <th>Longitud Destino</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -125,6 +157,12 @@
                     <td>{{ ruta.nombre }}</td>
                     <td>${{ "%.2f"|format(ruta.precio) }}</td>
                     <td>{{ ruta.descripcion }}</td>
+                    <td>{{ ruta.origen }}</td>
+                    <td>{{ ruta.destino }}</td>
+                    <td>{{ ruta.latitud_origen }}</td>
+                    <td>{{ ruta.longitud_origen }}</td>
+                    <td>{{ ruta.latitud_destino }}</td>
+                    <td>{{ ruta.longitud_destino }}</td>
                     <td class="acciones">
                         <a href="{{ url_for('editar_ruta', id=ruta.id_ruta) }}" class="btn btn-warning btn-sm">
                             <i class="bi bi-pencil-fill"></i> Editar

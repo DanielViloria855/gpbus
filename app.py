@@ -12,6 +12,7 @@ from modelos.bus import Bus
 from modelos.detalle_tiempo import DetalleTiempo
 from modelos.ruta import Ruta as RutaModel
 from modelos.viaje import Viaje
+from modelos.viaje import Viaje as ViajeModel
 from modelos.parada import Parada
 
 app = Flask(__name__)
@@ -65,7 +66,9 @@ def registrar_usuario():
         tipo_usuario = request.form.get("tipo_usuario")
         password = request.form.get("password")
         licencia = request.form.get("licencia", None)
-
+        
+        tipo_usuario = "pasajero"
+        licencia = None
         if not nombre or not email or not tipo_usuario or not password:
             return render_template("registro.html", mensaje="Todos los campos son obligatorios")
 
@@ -112,12 +115,20 @@ def pagina_admin():
         nombre = request.form.get("nombre")
         precio = request.form.get("precio")
         descripcion = request.form.get("descripcion")
+        origen = request.form.get("origen")
+        destino = request.form.get("destino")
+        latitud_origen = request.form.get("latitud_origen")
+        longitud_origen = request.form.get("longitud_origen")
+        latitud_destino = request.form.get("latitud_destino")
+        longitud_destino = request.form.get("longitud_destino")
 
-        if not nombre or not precio:
-            flash("Nombre y precio son obligatorios", "danger")
+
+        if not nombre or not precio or not origen or not destino or not latitud_destino or not longitud_destino or not latitud_origen or not longitud_origen or not descripcion:
+            flash(" Datos obligatorios", "danger")
             return redirect(url_for('pagina_admin'))
 
-        nueva_ruta = RutaModel(nombre=nombre, precio=float(precio), descripcion=descripcion)
+        nueva_ruta = RutaModel(nombre=nombre, precio=float(precio), descripcion=descripcion, origen=origen, destino=destino, latitud_origen=float(latitud_origen), longitud_origen=float(longitud_origen),
+                               latitud_destino=float(latitud_destino), longitud_destino=float(longitud_destino) )
         db.session.add(nueva_ruta)
         db.session.commit()
         flash("Ruta agregada con éxito", "success")
@@ -135,7 +146,12 @@ def editar_ruta(id):
         ruta.nombre = request.form.get("nombre")
         ruta.precio = float(request.form.get("precio"))
         ruta.descripcion = request.form.get("descripcion")
-
+        origen = request.form.get("origen")
+        destino = request.form.get("destino")
+        latitud_origen = request.form.get("latitud_origen")
+        longitud_origen = request.form.get("longitud_origen")
+        latitud_destino = request.form.get("latitud_destino")
+        longitud_destino = request.form.get("longitud_destino")
         db.session.commit()
         flash("Ruta actualizada con éxito", "success")
         return redirect(url_for('pagina_admin'))
@@ -245,52 +261,78 @@ def editar_conductor(id):
 @app.route('/admin/conductores/eliminar/<int:id>', methods=['POST'])
 @login_required
 def eliminar_conductor(id):
-    # Solo admins
     if current_user.tipo_usuario != 'admin':
         flash("Acceso denegado", "danger")
         return redirect(url_for('pagina_admin'))
 
-    c = UsuarioModel.query.get_or_404(id)
-    if c.tipo_usuario != 'conductor':
-        flash("Usuario no es conductor válido", "danger")
+    conductor = UsuarioModel.query.get_or_404(id)
+    if conductor.tipo_usuario != 'conductor':
+        flash("El usuario no es un conductor válido", "danger")
         return redirect(url_for('admin_conductores'))
 
-    db.session.delete(c)
+    db.session.delete(conductor)
     db.session.commit()
     flash("Conductor eliminado con éxito", "success")
     return redirect(url_for('admin_conductores'))
 
-@app.route('/get-buses')
-def get_buses():
-    # Simular actualización de posiciones de los buses
-    for bus in buses:
-        # Simular movimiento aleatorio
-        bus.lat += (random.random() - 0.5) * 0.001
-        bus.lng += (random.random() - 0.5) * 0.001
-        # Simular cambio de estado
-        if random.random() < 0.1:
-            bus.estado = 'en espera' if bus.estado == 'en ruta' else 'en ruta'
-    
-    return jsonify([{
-        'placa': bus.placa,
-        'lat': bus.lat,
-        'lng': bus.lng,
-        'estado': bus.estado
-    } for bus in buses])
 
 @app.route('/get-destinos')
 def get_destinos():
-    destinos = {
-        "San Cristóbal, Antioquia": {"lat": 6.27904978326974, "lng":-75.63593634892072},
-        "San Félix, Antioquia": {"lat": 6.4473, "lng": -75.5818},
-        "Ovejasn Antioquia": {"lat": 6.395945877792119, "lng": -75.64706782754776},
-        "San Pedro, Antioquia": {"lat": 6.459531328629943, "lng": -75.55972875682015}
-    }
+    rutas = RutaModel.query.all()
+
+    destinos = []
+    for ruta in rutas:
+        destinos.append({
+            "nombre": ruta.nombre,
+            "destino": ruta.destino,
+            "lat": ruta.latitud_destino,
+            "lng": ruta.longitud_destino
+        })
+
     return jsonify(destinos)
-@app.route('/graficos')
-def graficos():
-    return render_template('graficosadmin.html')
+@app.route('/iniciar_simulacion', methods=['POST'])
+@login_required
+def iniciar_simulacion():
+    # 1) ID del usuario autenticado
+    id_usuario = current_user.get_id()
+
+    # 2) Leer JSON de la petición
+    data = request.get_json(silent=True) or {}
+    id_ruta = data.get('id_ruta')
+    if not id_ruta:
+        return jsonify({ 'status': 'error', 'message': 'No se recibió id_ruta' }), 400
+
+    # 3) Seleccionar un bus aleatorio
+    placas = [bus.placa for bus in buses]  # usa tu lista estática o haz consulta a la BD
+    if not placas:
+        return jsonify({ 'status': 'error', 'message': 'No hay buses disponibles' }), 500
+    id_bus_aleatorio = random.choice(placas)
+
+    # 4) Fecha y hora actual
+    fecha_actual = datetime.datetime.utcnow()
+
+    # 5) Crear y guardar el viaje en la BD
+    nuevo_viaje = ViajeModel(
+        id_usuario=int(id_usuario),
+        id_ruta=int(id_ruta),
+        id_bus=id_bus_aleatorio,
+        fecha=fecha_actual
+    )
+    try:
+        db.session.add(nuevo_viaje)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({ 'status': 'error', 'message': f'Excepción al guardar: {str(e)}' }), 500
+
+    # 6) Devolver JSON de éxito
+    return jsonify({ 'status': 'ok', 'message': 'Viaje registrado correctamente' }), 200
+
+from werkzeug.security import generate_password_hash
+
+hash = generate_password_hash("1234567", method="pbkdf2:sha256")
+print(hash)
 if __name__ == '__main__':
-    with app.app_context():  
-        db.create_all()
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+    
+
